@@ -1,0 +1,214 @@
+Sub Conferência5409()
+'
+' CONFERÊNCIA SAÍDAS DO ATACADO 5409
+
+
+    Dim ws As Worksheet
+    Dim totalLinhas As Long
+    
+    Set ws = ThisWorkbook.Sheets("Conferência")
+    totalLinhas = ws.UsedRange.Rows.Count
+
+
+    Columns("P:P").Select
+    Application.CutCopyMode = False
+    Selection.TextToColumns Destination:=Range("P1"), DataType:=xlDelimited, _
+        TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, Tab:=True, _
+        Semicolon:=False, Comma:=False, Space:=False, Other:=False, FieldInfo _
+        :=Array(1, 1), TrailingMinusNumbers:=True
+        
+    Range("A2:AK2").Select
+    With Selection
+        .VerticalAlignment = xlCenter
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Range("A2").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .ThemeColor = xlThemeColorDark2
+        .TintAndShade = -0.749992370372631
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+    Selection.Font.Bold = True
+    
+    Range("A3").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Application.CutCopyMode = False
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlTop
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    
+    'FORMULAS PROCV
+    
+    Columns("P:R").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    Range("P2:R2").Interior.Color = RGB(131, 226, 142)
+    Range("P2:R2").Font.Color = RGB(0, 0, 0)
+    
+    Range("P2") = "Subgrupo Fiscal"
+    Range("Q2") = "Imposto RS"
+    Range("R2") = "EAN"
+    Range("R3") = "=VLOOKUP(RC[1],Cadastros!C[-17]:C[-15],3,0)"
+    Range("Q3") = "=VLOOKUP(RC[2],Cadastros!C[-16]:C[-1],16,0)"
+    Range("P3") = "=VLOOKUP(RC[3],Cadastros!C[-15]:C[-1],15,0)"
+    
+    Range("P3:R3").AutoFill Destination:=Range("P3:R" & totalLinhas)
+    
+    
+    'CÉLULAS COM AS INFORMAÇÃOES DO CADASTRO (AVULSO, PMC, PMPF, MVA E REDUTOR)
+    Range("V:AB").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    Range("V2:Y2,AA2:AB2").Interior.Color = Range("P2").Interior.Color
+    Range("V2:Y2,AA2:AB2").Font.Color = Range("P2").Font.Color
+    Range("Z2").Interior.Color = RGB(128, 128, 128)
+    Range("Z2").Font.Color = RGB(0, 0, 0)
+    
+    Range("V2") = "Venda Avulsa"
+    Range("W2") = "PMC"
+    Range("X2") = "PMPF Cadastro"
+    Range("Y2") = "PMPF Sefaz"
+    Range("Z2") = "DIF PMPF"
+    Range("AA2") = "MVA"
+    Range("AB2") = "Redutor"
+    
+    Range("V3") = "=VLOOKUP(RC[-3],Cadastros!C[-21]:C[-3],19,0)"
+    Range("Y3") = "=IFERROR(IFERROR(VLOOKUP(RC[-7],SEFAZ!C[-24]:C[-20],5,0),VLOOKUP(Conferência!RC[-6],SEFAZ!C[-18]:C[-15],4,0)),0)"
+    Range("W3") = "=IFERROR(IF(RC[-1]=""X"",(VLOOKUP(RC[-4],Cadastros!C[-22]:C[-18],5,0)/10000),VLOOKUP(RC[-4],Cadastros!C[-22]:C[-18],5,0)),0)"
+    Range("X3") = "=IFERROR(IF(RC[-2]=""X"",(VLOOKUP(RC[-5],Cadastros!C[-23]:C[-16],8,0)/10000),VLOOKUP(RC[-5],Cadastros!C[-23]:C[-16],8,0)),0)"
+    Range("Z3") = "=RC[-2]-RC[-1]"
+    Range("AB3") = "=IF(RC[-14]=""70"",0.411765,"""")"
+    Range("AA3") = "=IF(OR(RC[-13]=""10"",RC[-13]=""70""),0.656,"""")"
+    Range("V3:AB3").AutoFill Destination:=Range("V3:AB" & totalLinhas)
+
+
+    'CELULAS QUE VERIFICAM QUE EXISTE ERROS ENTRE "TOTAL C/ IMPOSTO" E "VALOR C/ IMPOSTO"
+    Columns("AE:AE").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    Range("AE2") = "#"
+    Range("AE2").Interior.Color = Range("Z2").Interior.Color
+    Range("AE3") = "=R[0]C[-2]-R[0]C[-1]"
+    Range("AE3").AutoFill Destination:=Range("AE3:AE" & totalLinhas)
+    
+    'CELULAS QUE VERIFICAL SE O ICMS ESTÁ CORRETO
+    Columns("AK:AL").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    
+    Range("AK2") = "Valor ICMS"
+    Range("AK2").Interior.Color = Range("P2").Interior.Color
+    Range("AK2").Font.Color = Range("P2").Font.Color
+    Range("AL2") = "DIF ICMS"
+    Range("AL2").Interior.Color = Range("Z2").Interior.Color
+    Range("AL2").Font.Color = Range("Z2").Font.Color
+    
+    Range("AK3").FormulaR1C1 = "=IF(RC[-2]>0,IF(RC[-23]=""10"",RC[-8]*0.17,RC[-8]*0.17*RC[-9]),0)"
+    Range("AL3").FormulaR1C1 = "=RC[-2]-RC[-1]"
+    Range("AK3:AL3").AutoFill Destination:=Range("AK3:AL" & totalLinhas)
+    
+    
+    'CELULAS QUE VERIFICAM SE O ICMSST ESTÁ CORRETO
+    Columns("AS:AZ").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    
+    Range("AS2:AV2,AX2:AY2").Interior.Color = Range("P2").Interior.Color
+    Range("AS2:AV2,AX2:AY2").Font.Color = Range("P2").Font.Color
+    
+    Range("AW2,AZ2").Interior.Color = Range("Z2").Interior.Color
+    Range("AW2,AZ2").Font.Color = Range("Z2").Font.Color
+    
+    Range("AS2") = "Base PMC"
+    Range("AT2") = "Base FMPF"
+    Range("AU2") = "Base MVA"
+    Range("AV2") = "Validador Bases"
+    Range("AW2") = "DIF Bases"
+    Range("AX2") = "Alíquota"
+    Range("AY2") = "Valor ICST"
+    Range("AZ2") = "DIF ICST"
+    
+    Range("AS3") = "=IF(RC[-22]=0,9999999,IF(RC[-31]<=""60"",RC[-24]*RC[-22],RC[-24]*RC[-22]*RC[-17]))"
+    Range("AT3") = "=IFERROR(IF(RC[-32]<""60"",RC[-25]*RC[-21],RC[-25]*RC[-21]*RC[-18]),0)"
+    Range("AU3") = "=IFERROR(IF(RC[-33]<""60"",RC[-18]*RC[-20]+RC[-18],((RC[-18]*RC[-20]+RC[-18])*RC[-19])),0)"
+    Range("AV3") = "=IFERROR(IF(RC[-2]=0,IF(RC[-3]<RC[-1],RC[-3],RC[-1]),IF(RC[-3]<RC[-2],RC[-3],RC[-2])),0)"
+    Range("AW3") = "=RC[-8]-RC[-1]"
+    Range("AX3") = "=IF(RC[-36]<>""60"",0.17,0)"
+    Range("AY3") = "=IF(RC[-3]*RC[-1]-RC[-14]<0,0,RC[-3]*RC[-1]-RC[-14])"
+    Range("AZ3") = "=RC[-8]-RC[-1]"
+    Range("AS3:AZ3").AutoFill Destination:=Range("AS3:AZ" & totalLinhas)
+
+
+    'CELULAS QUE VERIFICAM SE O VALOR CONTÁBIL ESTÁ CORRETO
+    Columns("BC").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+ 
+    Range("BC2") = "<> Contábil"
+    Range("BC2").Interior.Color = Range("AW2").Interior.Color
+    Range("BC2").Font.Color = Range("AW2").Font.Color
+
+    Range("BC3") = "=RC[-1]-RC[-22]-RC[-21]-RC[-16]-RC[-15]-RC[-11]-RC[-2]"
+    Range("BC3").AutoFill Destination:=Range("BC3:BC" & totalLinhas)
+    
+    'CELULAS QUE VERIFICAM O CBENEF
+    Columns("BE:BF").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    Range("BF2").Interior.Color = Range("AW2").Interior.Color
+    Range("BF2").Font.Color = Range("AW2").Font.Color
+    Range("BE2").Interior.Color = Range("P2").Interior.Color
+    Range("BE2").Font.Color = Range("P2").Font.Color
+    
+    Range("BE2") = "Código beneficio fiscal estadual"
+    Range("BF2") = "Conferência CBENEF"
+
+    Range("BE3") = "=IF(RC[-43]=""10"",""SEM CBENEF"",IF(RC[-43]=""60"",VLOOKUP(RC[-38],Cadastros!C[-56]:C[-36],21,0),VLOOKUP(Conferência!RC[-38],Cadastros!C[-56]:C[-33],24,0)))"
+    Range("BF3") = "=IF(RC[-2]="""",""VERDADEIRO"",RC[-2]=RC[-1])"
+    
+    Range("BE3:BF3").AutoFill Destination:=Range("BE3:BF" & totalLinhas)
+    
+    Range("BK2") = "CONFERÊNCIA"
+    Range("BK2").Interior.Color = Range("P2").Interior.Color
+    Range("BK2").Font.Color = Range("P2").Font.Color
+    Range("BK2").Font.Bold = True
+    
+        Range("BK2").Select
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Columns("BK:BK").EntireColumn.AutoFit
+    
+
+    ' Limpar a variável de objeto
+    Set ws = Nothing
+
+   
+    MsgBox "FÓRMULAS APLICADAS", vbExclamation, "Alerta"
+
+End Sub
